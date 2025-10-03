@@ -1,10 +1,22 @@
 {% extends 'base.html'%}
 {% block content %}
-	<h1>
-		Hello World!!
-	</h1>
-	<p>
-		Enthu ondu kutta vishesham!!<br>
-		demm bro!!
-	</p>
+	{% for message in get_flashed_messages() %}
+		<!--use bootstrap for design-->
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			Hey, {{message}}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+	<center>
+		<h1>
+			Hello World!!
+		</h1>
+		<p>
+			Enthu ondu kutta vishesham!!<br>
+			demm bro!!
+		</p>
+		<img src="{{url_for('static',filename='images/js.jpg')}}" width=300px height=300px>
+		<p id='demo'>not jaba</p>
+		<script src="{{url_for('static',filename='js/myfile.js')}}"></script>
+	</center>
 {%  endblock%}

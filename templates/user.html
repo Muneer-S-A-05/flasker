@@ -2,13 +2,13 @@
 {% block content %}
 	<h1>
 		<!--we can use upper, lower, capitalise,title as filters using '|'-->
-		Hello {{name|capitalise}}!!
+		Hello {{name|capitalize}}!!
 		<!-- safe tag will let the program know that if the variable string contains tags, it us who put it there and not injected. the code will execute them. without safe, the tags will be not treated as tags and just printed-->
 		<!--striptags on the other hand completely strips them off-->
 		<!--trim removes trailing spaces (can't usually tell in html)-->
 		<!-- we can get more in jinja site for built in filters -->
 	</h1>
-	<b>Here's the order of ma list and it says:</b><br><br>
+	<b><br>Here's the order of ma list and it says:</b><br><br>
 	<!-- we can use { % % } for codes-->
 	{%for rapper in l%}
 		{%if rapper!=33%}
