@@ -1,0 +1,37 @@
+{% extends 'base.html'%}
+{% block content %}
+	<!-- here the messages will be shown in loop-->
+	{% for message in get_flashed_messages() %}
+		<!--use bootstrap for design-->
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			{{message}}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+	
+	<h1>Add blog post:</h1>
+	<br>
+<div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+	<!--since we are rendering this same page for the /delete/id as well, if we dont put action, method not allowed error varum-->
+	<form method='POST'>
+		<!--hidden_tag() is used check csrf token when submitting the form-->
+		{{form.hidden_tag()}}
+		{{form.title.label(class="form-label")}}
+		{{form.title(class="form-control")}}
+		<br>
+		{{form.author.label(class="form-label")}}
+		{{form.author(class="form-control")}}
+		<br>
+		{{form.slug.label(class="form-label")}}
+		{{form.slug(class="form-control")}}
+		<br>
+		{{form.content.label(class="form-label")}}
+		{{form.content(class="form-control", rows="5")}}
+		<br>
+		{{form.submit(class="btn btn-outline-success")}}
+		<!-- we took class value from bootstrap forms (buttons)-->
+	</form>
+</div>
+<br><br>
+
+{%  endblock%}

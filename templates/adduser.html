@@ -3,7 +3,7 @@
 	<!-- here the messages will be shown in loop-->
 	{% for message in get_flashed_messages() %}
 		<!--use bootstrap for design-->
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
 			Hey {{name|title}}, {{message}}
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
@@ -12,7 +12,8 @@
 	<h1>User List:</h1>
 	<br>
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
-	<form method='POST'>
+	<!--since we are rendering this same page for the /delete/id as well, if we dont put action, method not allowed error varum-->
+	<form method='POST' action="{{ url_for('adduser') }}">
 		<!--hidden_tag() is used check csrf token when submitting the form-->
 		{{form.hidden_tag()}}
 		{{form.name.label(class="form-label")}}
@@ -21,15 +22,24 @@
 		{{form.email.label(class="form-label")}}
 		{{form.email(class="form-control")}}
 		<br>
+		{{form.favorite_color.label(class="form-label")}}
+		{{form.favorite_color(class="form-control")}}
+		<br>
+		{{form.password_hash.label(class="form-label")}}
+		{{form.password_hash(class="form-control")}}
+		<br>
+		{{form.password_hash2.label(class="form-label")}}
+		{{form.password_hash2(class="form-control")}}
+		<br>
 		{{form.submit(class="btn btn-outline-success")}}
 		<!-- we took class value from bootstrap forms (buttons)-->
 	</form>
 </div>
 <br><br>
-<table class="table table-hover tabel-bordered table-striped">
+<table class="table table-hover tabel-bordered table-striped table-dark">
 {%for our_user in our_users%}
 	<tr>
-	<td>{{our_user.id}}.<a href="{{url_for('update',id=our_user.id)}}">{{our_user.name}}</a> - {{our_user.email}}<br>
+	<td>{{our_user.id}}.&nbsp;&nbsp;<a href="{{url_for('update',id=our_user.id)}}" style="color:green;">{{our_user.name}}</a> - {{our_user.email}}{%if our_user.favorite_color%} - {{our_user.favorite_color}}{%endif%}&nbsp;&nbsp;-&nbsp;&nbsp;<a href="{{url_for('delete',id=our_user.id)}}">DELETE USER</a><br>
 {% endfor %}</td>
 	</tr>
 </table>

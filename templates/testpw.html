@@ -1,0 +1,31 @@
+{% extends 'base.html'%}
+{% block content %}
+	<!-- here the messages will be shown in loop-->
+	{% for message in get_flashed_messages() %}
+		<!--use bootstrap for design-->
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			Hey {{email}}, {{message}}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+	{%if email%}
+		<h1>Hello {{pw_to_check.email}}!!</h1><br>
+		password : {{pw_to_check.password_hash}}<br><br>
+		passed : {{passed}}
+	{%else%}
+		<h1>Whats ur email and password?</h1>
+		<br>
+		<form method='POST'>
+			<!--hidden_tag() is used check csrf token when submitting the form-->
+			{{form.hidden_tag()}}
+			{{form.email.label(class="form-label")}}
+			{{form.email(class="form-control")}}
+			<br>
+			{{form.password_hash.label(class="form-label")}}
+			{{form.password_hash(class="form-control")}}
+			<br>
+			{{form.submit(class="btn btn-outline-success")}}
+			<!-- we took class value from bootstrap forms (buttons)-->
+		</form>
+	{%endif%}
+{%  endblock%}
