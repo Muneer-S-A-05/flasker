@@ -1,5 +1,5 @@
 #flash is for messages
-from flask import Flask, render_template, flash
+from flask import Flask, render_template, flash, request
 
 #for doing forms
 from flask_wtf import FlaskForm
@@ -12,10 +12,18 @@ from datetime import datetime
 
 #creating flask instance
 app = Flask(__name__)
+
 #secret key
 app.config['SECRET_KEY'] = "my super secret key"
-#setting database uri
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///userss.db'
+
+#setting database uri for sqlite
+#app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///userss.db'
+
+#setting database uri for mysql, our_users is db name
+# we need to make a database first
+app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:1234@localhost/sample'
+
+
 #initialise db
 db = SQLAlchemy(app)
 
@@ -29,13 +37,13 @@ class Userss(db.Model):
 	def __repr__(self):
 		return '<Name %r>' %self.name
 
-#create a form class
+#create a form class for adduser
 class UserForm(FlaskForm):
 	name = StringField("Name", validators=[DataRequired()])
 	email = StringField("Email", validators=[DataRequired()])
 	submit = SubmitField("Submit")
 
-#create a form class
+#create a form class for name
 class NamerForm(FlaskForm):
 	name = StringField("whats ur name?", validators=[DataRequired()])
 	#theres a lot of validators we could use to control the input of forms in flask_wtf
@@ -45,7 +53,6 @@ class NamerForm(FlaskForm):
 @app.route('/')
 
 def index():
-	flash("Welcome to ma casa!!")
 	return render_template("index.html")
 	#flask will find it in templates directory
 
@@ -59,20 +66,6 @@ def user(name):
 	return render_template("user.html",name=name,l=l)
 	#the first part is used in html page using {{}}, its convention to use same variable name but not necessary
 	#we can pass any variable like this
-
-# custom error handler
-
-#flask has some mechanism to deal with it instead of routes
-
-#invlaid url
-@app.errorhandler(404)
-def not_found(e):
-	return render_template("404.html"),404
-
-#internal server error
-@app.errorhandler(500)
-def not_found(e):
-	return render_template("500.html"),500
 
 #name page
 @app.route('/name',methods=['GET','POST'])
@@ -97,9 +90,46 @@ def adduser():
 			user = Userss(name=form.name.data,email=form.email.data)
 			db.session.add(user)
 			db.session.commit()
+			flash("User added successfully")
 		name = form.name.data
 		form.name.data=''
 		form.email.data=''
-		flash("User added successfully")
 	our_users=Userss.query.order_by(Userss.date_added)
 	return render_template('adduser.html',form=form,name=name,our_users=our_users)
+
+@app.route('/update/<int:id>',methods=['GET','POST'])
+def update(id):
+	form=UserForm();
+	name_to_update = Userss.query.get_or_404(id)
+	if request.method=='POST':
+		name_to_update.name = request.form['name']
+		name_to_update.email = request.form['email']
+		try:
+			db.session.commit()
+			flash("Updated successfully")
+			return render_template('update.html',name_to_update=name_to_update,form=form)
+		except:
+			flash("Error.. try again..")
+			return render_template('update.html',form=form,name_to_update=name_to_update)
+	else:
+		return render_template('update.html',form=form, name_to_update=name_to_update)
+
+
+# custom error handler
+#flask has some mechanism to deal with it instead of routes
+#invlaid url
+@app.errorhandler(404)
+def not_found(e):
+	return render_template("404.html"),404
+
+#internal server error
+@app.errorhandler(500)
+def internal_error(e):
+	return render_template("500.html"),500
+
+# to call a trigger on purpose, make sure debugger is off
+#
+#@app.route('/trigger-500')
+#def trigger_500():
+#	raise Exception("This is a test 500 error")
+
