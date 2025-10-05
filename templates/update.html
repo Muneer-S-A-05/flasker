@@ -18,6 +18,9 @@
 		{{form.name.label(class="form-label")}}
 		{{form.name(class="form-control",value=name_to_update.name)}}
 		<br>
+		{{form.username.label(class="form-label")}}
+		{{form.username(class="form-control",value=name_to_update.username)}}
+		<br>
 		{{form.email.label(class="form-label")}}
 		{{form.email(class="form-control",value=name_to_update.email)}}
 		<br>
@@ -25,7 +28,10 @@
 		{{form.favorite_color(class="form-control",value=name_to_update.favorite_color)}}
 		<br>
 		{{form.submit(class="btn btn-outline-success")}}
+		
+		{% if current_user.is_authenticated  and current_user.username=='zoro'%}
 		<a href="{{url_for('delete',id=id)}}" class="btn btn-danger">Delete</a>
+		{% endif %}
 		<!-- we took class value from bootstrap forms (buttons)-->
 	</form>
 </div>

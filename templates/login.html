@@ -8,37 +8,22 @@
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
 	{% endfor %}
-
-{% if current_user.is_authenticated %}
-	<h1>Add blog post:</h1>
+	
+	<h1>Login</h1>
 	<br>
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
 	<!--since we are rendering this same page for the /delete/id as well, if we dont put action, method not allowed error varum-->
 	<form method='POST'>
 		<!--hidden_tag() is used check csrf token when submitting the form-->
 		{{form.hidden_tag()}}
-		{{form.title.label(class="form-label")}}
-		{{form.title(class="form-control")}}
+
+		{{form.username.label(class="form-label")}}
+		{{form.username(class="form-control")}}
 		<br>
-		{{form.author.label(class="form-label")}}
-		{{form.author(class="form-control")}}
-		<br>
-		{{form.slug.label(class="form-label")}}
-		{{form.slug(class="form-control")}}
-		<br>
-		{{form.content.label(class="form-label")}}
-		{{form.content(class="form-control", rows="5")}}
+		{{form.password.label(class="form-label")}}
+		{{form.password(class="form-control")}}
 		<br>
 		{{form.submit(class="btn btn-outline-success")}}
-		<!-- we took class value from bootstrap forms (buttons)-->
 	</form>
 </div>
-{% else %}
-
-<h2>Must be logged in</h2>
-<p>You need to login to post blogs</p>
-<a href="{{url_for('login')}}" class="btn btn-sm btn-primary">Login here</a>
-
-{% endif %}
-
 {%  endblock%}

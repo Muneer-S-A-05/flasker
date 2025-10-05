@@ -6,17 +6,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if current_user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('name')}}">Name</a>
+          <a class="nav-link" href="{{url_for('dashboard')}}">Dashboard</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{url_for('user',name='john')}}">John</a>
-        </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('adduser')}}">Users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('testpw')}}">Test Password</a>
+          <a class="nav-link" href="{{url_for('name')}}">Name</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('add_post')}}">Add Blog</a>
@@ -24,6 +23,15 @@
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('posts')}}">Blogs</a>
         </li>
+        {% if not current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('login')}}">Login</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('logout')}}">Log out</a>
+        </li>
+        {% endif %}
       </ul>
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>

@@ -1,10 +1,14 @@
 #flash is for messages
 from flask import Flask, render_template, flash, request,redirect,url_for
 
+#for doing forms
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError
+from wtforms.validators import DataRequired, EqualTo,Length
 
 # for database
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 
 # for migrating database
 from flask_migrate import Migrate
@@ -12,15 +16,13 @@ from flask_migrate import Migrate
 # for hashing
 from werkzeug.security import generate_password_hash, check_password_hash
 
-#get current date
-from datetime import date
-
+#inporting textarea which are bigger than regular text fields
+from wtforms.widgets import TextArea
 
 #login
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 
-#cleanup shit
-from webforms import *
+
 
 
 
@@ -87,8 +89,7 @@ class Userss(db.Model,UserMixin):
 	name=db.Column(db.String(50),nullable=False)
 	email=db.Column(db.String(50),nullable=False,unique=True)
 	favorite_color=db.Column(db.String(20))
-	#using now().replace(microsends=0) as utc time is in freaking britain
-	date_added=db.Column(db.DateTime,default=datetime.now().replace(microsecond=0))
+	date_added=db.Column(db.DateTime,default=datetime.utcnow)
 	#password
 	password_hash = db.Column(db.String(256))
 	#some properties for password
@@ -130,10 +131,51 @@ class Posts(db.Model):
 
 
 
+#create a form class for adduser
+class UserForm(FlaskForm):
+	name = StringField("Name", validators=[DataRequired()])
+	username = StringField("Username", validators=[DataRequired()])
+	email = StringField("Email", validators=[DataRequired()])
+	favorite_color = StringField("Favorite Color")
+	password_hash=PasswordField('Password',validators=[DataRequired(),EqualTo('password_hash2',message='Passwords must match')])
+	password_hash2=PasswordField('Confirm Password',validators=[DataRequired()])
+	submit = SubmitField("Submit")
+
+#create a form class for name
+class NamerForm(FlaskForm):
+	name = StringField("whats ur name?", validators=[DataRequired()])
+	#theres a lot of validators we could use to control the input of forms in flask_wtf
+	submit = SubmitField("Submit")
+
+# form for handling password
+class PasswordForm(FlaskForm):
+	email = StringField("Email", validators=[DataRequired()])
+	password_hash = PasswordField("Password", validators=[DataRequired()])
+	submit = SubmitField("Submit")
+
+# form to handle posts
+class PostForm(FlaskForm):
+	title = StringField("Title",validators=[DataRequired()])
+	content = StringField("Content",validators=[DataRequired()],widget=TextArea())
+	author = StringField("Author",validators=[DataRequired()])
+	slug = StringField("Slug",validators=[DataRequired()])
+	submit = SubmitField("Submit")
+
+#login form
+class LoginForm(FlaskForm):
+	username=StringField("Username",validators=[DataRequired()])
+	password=PasswordField("Password",validators=[DataRequired()])
+	submit=SubmitField("Submit")
+
+
+
+
+
+
+
 #creating route decorator
 @app.route('/')
 def index():
-	print(datetime.utcnow())
 	return render_template("index.html")
 	#flask will find it in templates directory
 
@@ -348,7 +390,7 @@ def logout():
 
 
 #dashboard page
-@app.route('/dashboard', methods=['GET','POST'])
+@app.route('/dashboard')
 @login_required
 def dashboard():
 	form=UserForm();
@@ -361,7 +403,7 @@ def dashboard():
 		try:
 			db.session.commit()
 			flash("Updated successfully")
-			return render_template('dashboard.html',form=form,name_to_update=name_to_update)
+			return render_template('dashboard.html',form,name_to_update=name_to_update)
 		except:
 			flash("Error.. try again..")
 			return render_template('dashboard.html',form=form,name_to_update=name_to_update)
