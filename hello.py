@@ -188,6 +188,7 @@ def adduser():
 
 #page to update user details
 @app.route('/update/<int:id>',methods=['GET','POST'])
+@login_required
 def update(id):
 	form=UserForm();
 	name_to_update = Userss.query.get_or_404(id)
@@ -390,7 +391,9 @@ def internal_error(e):
 
 # to call a trigger on purpose, make sure debugger is off
 #
-#@app.route('/trigger-500')
-#def trigger_500():
-#	raise Exception("This is a test 500 error")
+@app.route('/trigger-500')
+def trigger_500():
+	raise Exception("This is a test 500 error")
 
+if __name__ == "__main__":
+    app.run()

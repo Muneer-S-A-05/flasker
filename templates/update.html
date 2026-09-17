@@ -8,7 +8,8 @@
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
 	{% endfor %}
-	
+
+{% if id==current_user.id %}	
 	<h1>Update {{name_to_update.name}}:</h1>
 	<br>
 <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
@@ -36,6 +37,14 @@
 	</form>
 </div>
 <br><br>
+{%else%}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			Sorry You can't access this page!!
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+<h1>Access Denied!!</h1>
+<p> You dont have access to this page</p>
+{%endif%}
 <table class="table table-hover tabel-bordered table-striped table-dark">
 {%for our_user in our_users%}
 	<tr>
